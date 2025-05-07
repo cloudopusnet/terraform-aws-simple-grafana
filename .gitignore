@@ -35,3 +35,8 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# Ignore .terraform.lock.hcl
+# We would rely on these files in the examples directory when we initiate the modules
+# We don't want to commit these to source control
+.terraform.lock.hcl

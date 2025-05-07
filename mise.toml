@@ -1,0 +1,17 @@
+[tools]
+terraform      = "1.9.8"
+pre-commit     = "4.2.0"
+terraform-docs = "0.20.0"
+trivy          = "0.62.0"
+tflint         = "0.56.0"
+gitleaks       = "8.25.1"
+
+[tasks]
+[tasks.fmt]
+run = "terraform fmt -recursive"
+
+[tasks.pre-commit]
+run = "pre-commit run --all-files --show-diff-on-failure"
+
+[tasks.trivy]
+run = "trivy fs --scanners misconfig,secret,vuln ."
