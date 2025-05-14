@@ -2,7 +2,14 @@ locals {
   name_prefix                   = "grafana"
   instance_security_groups      = concat(var.security_group_ids, [aws_security_group.main.id])
   ssm_managed_instance_core_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-  user_data                     = base64encode(templatefile("${path.module}/ec2-userdata.sh.tpl", {}))
+  user_data = base64encode(join("\n", [
+    templatefile("${path.module}/ec2-grafana-userdata.sh.tpl", {}),
+    templatefile("${path.module}/ec2-nginx-userdata.sh.tpl", {
+      nginx_ssl_cert_parameter_name     = var.nginx_ssl_cert_parameter_name
+      nginx_ssl_cert_key_parameter_name = var.nginx_ssl_cert_key_parameter_name
+    }),
+    ])
+  )
 }
 
 ##########
