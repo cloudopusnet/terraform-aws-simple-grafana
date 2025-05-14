@@ -1,18 +1,17 @@
 locals {
-  name_prefix                   = "Grafana"
+  name_prefix                   = "grafana"
   instance_security_groups      = concat(var.security_group_ids, [aws_security_group.main.id])
   ssm_managed_instance_core_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-  user_data = base64encode(templatefile("${path.module}/ec2-userdata.sh.tpl", {
-
-  }))
+  user_data                     = base64encode(templatefile("${path.module}/ec2-userdata.sh.tpl", {}))
 }
 
 ##########
 ## Security Group
 ##########
 resource "aws_security_group" "main" {
-  name   = "sgtest"
-  vpc_id = var.vpc_id
+  name        = local.name_prefix
+  description = "${local.name_prefix} Security Group for the terraform-aws-simple-grafana stack"
+  vpc_id      = var.vpc_id
 }
 
 resource "aws_security_group_rule" "main_ingress_http" {
@@ -22,6 +21,7 @@ resource "aws_security_group_rule" "main_ingress_http" {
   protocol          = "tcp"
   security_group_id = aws_security_group.main.id
   type              = "ingress"
+  description       = "Allow incoming http traffic"
 }
 
 resource "aws_security_group_rule" "main_ingress_https" {
@@ -31,6 +31,7 @@ resource "aws_security_group_rule" "main_ingress_https" {
   protocol          = "tcp"
   security_group_id = aws_security_group.main.id
   type              = "ingress"
+  description       = "Allow incoming https traffic"
 }
 
 resource "aws_security_group_rule" "main_egress_all" {
@@ -40,6 +41,7 @@ resource "aws_security_group_rule" "main_egress_all" {
   protocol          = -1
   security_group_id = aws_security_group.main.id
   type              = "egress"
+  description       = "Allow all outgoing traffic"
 }
 
 ##########
@@ -48,11 +50,17 @@ resource "aws_security_group_rule" "main_egress_all" {
 resource "aws_network_interface" "main" {
   subnet_id       = var.instance_subnet_id
   security_groups = local.instance_security_groups
+  tags = {
+    Name = local.name_prefix
+  }
 }
 
 resource "aws_eip" "main" {
   domain            = "vpc"
   network_interface = aws_network_interface.main.id
+  tags = {
+    Name = local.name_prefix
+  }
 }
 
 resource "aws_eip_association" "main" {
@@ -75,10 +83,10 @@ data "aws_iam_policy_document" "assume_role" {
   }
 }
 
-
 resource "aws_iam_role" "profile" {
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
-  name               = "${local.name_prefix}Profile"
+  name               = local.name_prefix
+  description        = "${local.name_prefix} Instance Profile IAM Role for the terraform-aws-simple-grafana stack"
 }
 
 resource "aws_iam_role_policy_attachment" "profile_ssm" {
@@ -88,57 +96,55 @@ resource "aws_iam_role_policy_attachment" "profile_ssm" {
 
 resource "aws_iam_instance_profile" "main" {
   role = aws_iam_role.profile.id
-  name = "${local.name_prefix}Profile"
+  name = local.name_prefix
 }
-
 
 ##########
 ## Launch Template
 ##########
-data "aws_ami" "al2023" {
-  most_recent = true
-  owners      = ["amazon"]
-
-  filter {
-    name   = "name"
-    values = ["al2023-ami-*-arm64"]
-  }
-}
-
 resource "aws_launch_template" "main" {
-  name      = "test"
-  image_id  = "ami-0ce1f41dd519a3b4c"
-  user_data = local.user_data
+  name                   = local.name_prefix
+  description            = "${local.name_prefix} Launch Tempplate for the terraform-aws-simple-grafana stack"
+  image_id               = "ami-0cd3f0d8daa83abeb"
+  user_data              = local.user_data
+  instance_type          = var.instance_type
+  update_default_version = true
+  ebs_optimized          = true
+  metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "required"
+
+  }
   network_interfaces {
     network_interface_id = aws_network_interface.main.id
   }
-  instance_type = "t4g.small"
-
-  update_default_version = true
-
   instance_market_options {
     market_type = "spot"
-  }
-
-  ebs_optimized = true
-  block_device_mappings {
-    device_name = "/dev/xvda"
-    ebs {
-      volume_type = "gp3"
-      throughput  = 125
-      iops        = 3000
-      encrypted   = true
-      volume_size = 8
-    }
   }
   iam_instance_profile {
     arn = aws_iam_instance_profile.main.arn
   }
+  block_device_mappings {
+    device_name = "/dev/xvda"
+    ebs {
+      volume_type = var.block_device_mappings.volume_type
+      throughput  = var.block_device_mappings.throughput
+      iops        = var.block_device_mappings.iops
+      encrypted   = var.block_device_mappings.encrypted
+      volume_size = var.block_device_mappings.volume_size
+    }
+  }
 }
 
+##########
+## EC2 Instance
+##########
 resource "aws_instance" "main" {
   launch_template {
     id      = aws_launch_template.main.id
     version = aws_launch_template.main.latest_version
+  }
+  tags = {
+    Name = local.name_prefix
   }
 }
