@@ -41,6 +41,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_backup_bucket_name"></a> [backup\_bucket\_name](#input\_backup\_bucket\_name) | Name of the Backup Bucket | `string` | n/a | yes |
 | <a name="input_block_device_mappings"></a> [block\_device\_mappings](#input\_block\_device\_mappings) | Attached EBS Root volume properties | <pre>object({<br/>    volume_type = string<br/>    volume_size = number<br/>    encrypted   = bool<br/>    iops        = number<br/>    throughput  = number<br/>  })</pre> | <pre>{<br/>  "encrypted": true,<br/>  "iops": 3000,<br/>  "throughput": 125,<br/>  "volume_size": 20,<br/>  "volume_type": "gp3"<br/>}</pre> | no |
 | <a name="input_instance_subnet_id"></a> [instance\_subnet\_id](#input\_instance\_subnet\_id) | The Subnet Id where the simple grafana stack will be launched | `string` | n/a | yes |
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | Instance Type of the Grafana Instance | `string` | `"t4g.small"` | no |

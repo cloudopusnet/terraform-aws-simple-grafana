@@ -22,20 +22,20 @@ cat > /etc/nginx/nginx.conf << 'NGINX_CONFIG'
 worker_processes auto;
 pid /run/nginx.pid;
 
-map $http_upgrade $connection_upgrade {
-  default upgrade;
-  '' close;
-}
-
-upstream grafana {
-  server localhost:3000;
-}
-
 events {
   worker_connections 1024;
 }
 
 http {
+  map $http_upgrade $connection_upgrade {
+    default upgrade;
+    '' close;
+  }
+
+  upstream grafana {
+    server localhost:3000;
+  }
+
   server {
     listen 80 default_server;
     listen [::]:80 default_server;
