@@ -44,6 +44,8 @@ No modules.
 | <a name="input_block_device_mappings"></a> [block\_device\_mappings](#input\_block\_device\_mappings) | Attached EBS Root volume properties | <pre>object({<br/>    volume_type = string<br/>    volume_size = number<br/>    encrypted   = bool<br/>    iops        = number<br/>    throughput  = number<br/>  })</pre> | <pre>{<br/>  "encrypted": true,<br/>  "iops": 3000,<br/>  "throughput": 125,<br/>  "volume_size": 20,<br/>  "volume_type": "gp3"<br/>}</pre> | no |
 | <a name="input_instance_subnet_id"></a> [instance\_subnet\_id](#input\_instance\_subnet\_id) | The Subnet Id where the simple grafana stack will be launched | `string` | n/a | yes |
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | Instance Type of the Grafana Instance | `string` | `"t4g.small"` | no |
+| <a name="input_nginx_ssl_cert_key_parameter_name"></a> [nginx\_ssl\_cert\_key\_parameter\_name](#input\_nginx\_ssl\_cert\_key\_parameter\_name) | Name of the SSL parameter of TLS Certification Key for NGINX reverse proxy | `string` | n/a | yes |
+| <a name="input_nginx_ssl_cert_parameter_name"></a> [nginx\_ssl\_cert\_parameter\_name](#input\_nginx\_ssl\_cert\_parameter\_name) | Name of the SSL parameter of the TLS Certification for NGINX reverse proxy | `string` | n/a | yes |
 | <a name="input_security_group_ids"></a> [security\_group\_ids](#input\_security\_group\_ids) | Additional Security Group Ids attached to the Grafana Instance | `list(string)` | `[]` | no |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The VPC Id where the simple-grafana stack will be launched | `string` | n/a | yes |
 
