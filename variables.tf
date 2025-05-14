@@ -51,3 +51,9 @@ variable "nginx_ssl_cert_key_parameter_name" {
   description = "Name of the SSL parameter of TLS Certification Key for NGINX reverse proxy"
   nullable    = false
 }
+
+variable "backup_bucket_name" {
+  type        = string
+  description = "Name of the Backup Bucket"
+  nullable    = false
+}
