@@ -2,16 +2,23 @@ locals {
   name_prefix                   = "grafana"
   instance_security_groups      = concat(var.security_group_ids, [aws_security_group.main.id])
   ssm_managed_instance_core_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+  grafana_repo_content          = file("${path.module}/userdata/grafana-repo.conf")
+  nginx_config_content          = file("${path.module}/userdata/nginx.conf")
+  backup_sync_content = templatefile("${path.module}/userdata/backup-cron.sh.tpl", {
+    backup_bucket_name = var.backup_bucket_name
+  })
   user_data = base64encode(join("\n", [
-    templatefile("${path.module}/ec2-grafana-userdata.sh.tpl", {
-      backup_bucket_name = var.backup_bucket_name
+    templatefile("${path.module}/userdata/ec2-grafana-userdata.sh.tpl", {
+      backup_bucket_name   = var.backup_bucket_name
+      grafana_repo_content = local.grafana_repo_content
     }),
-    templatefile("${path.module}/ec2-nginx-userdata.sh.tpl", {
+    templatefile("${path.module}/userdata/ec2-nginx-userdata.sh.tpl", {
       nginx_ssl_cert_parameter_name     = var.nginx_ssl_cert_parameter_name
       nginx_ssl_cert_key_parameter_name = var.nginx_ssl_cert_key_parameter_name
+      nginx_config_content              = local.nginx_config_content
     }),
-    templatefile("${path.module}/ec2-backup-sync.sh.tpl", {
-      backup_bucket_name = var.backup_bucket_name
+    templatefile("${path.module}/userdata/ec2-backup-sync.sh.tpl", {
+      backup_sync_content = local.backup_sync_content
     })
     ])
   )
@@ -104,6 +111,29 @@ resource "aws_iam_role" "profile" {
 resource "aws_iam_role_policy_attachment" "profile_ssm" {
   role       = aws_iam_role.profile.id
   policy_arn = local.ssm_managed_instance_core_arn
+}
+
+resource "aws_iam_role_policy" "s3_permissions" {
+  name = "${local.name_prefix}s3permission"
+  role = aws_iam_role.profile.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "s3:GetObject",
+          "s3:ListBucket",
+          "s3:PutObject",
+        ]
+        Effect = "Allow"
+        Resource = [
+          "arn:aws:s3:::${var.backup_bucket_name}",
+          "arn:aws:s3:::${var.backup_bucket_name}/*",
+        ]
+      },
+    ]
+  })
 }
 
 resource "aws_iam_instance_profile" "main" {
