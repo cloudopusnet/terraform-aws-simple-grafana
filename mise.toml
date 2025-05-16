@@ -2,7 +2,7 @@
 terraform      = "1.9.8"
 pre-commit     = "4.2.0"
 terraform-docs = "0.20.0"
-trivy          = "0.62.0"
+trivy          = "0.62.1"
 tflint         = "0.56.0"
 gitleaks       = "8.25.1"
 
