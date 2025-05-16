@@ -13,7 +13,7 @@ A simple solution for self-hosting Grafana OSS on AWS
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.97.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 5.97 |
 
 ## Modules
 
@@ -44,6 +44,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_backup_bucket_name"></a> [backup\_bucket\_name](#input\_backup\_bucket\_name) | Name of the Backup Bucket | `string` | n/a | yes |
 | <a name="input_block_device_mappings"></a> [block\_device\_mappings](#input\_block\_device\_mappings) | Attached EBS Root volume properties | <pre>object({<br/>    volume_type = string<br/>    volume_size = number<br/>    encrypted   = bool<br/>    iops        = number<br/>    throughput  = number<br/>  })</pre> | <pre>{<br/>  "encrypted": true,<br/>  "iops": 3000,<br/>  "throughput": 125,<br/>  "volume_size": 20,<br/>  "volume_type": "gp3"<br/>}</pre> | no |
+| <a name="input_grafana_config_ini"></a> [grafana\_config\_ini](#input\_grafana\_config\_ini) | n/a | <pre>object({<br/>    paths = object({<br/>      data               = optional(string, "/var/lib/grafana")<br/>      temp_data_lifetime = optional(string, "18h")<br/>      logs               = optional(string, "/var/lib/grafana/plugins")<br/>      plugins            = optional(string, "/var/log/grafana")<br/>    })<br/>  })</pre> | n/a | yes |
 | <a name="input_instance_subnet_id"></a> [instance\_subnet\_id](#input\_instance\_subnet\_id) | The Subnet Id where the simple grafana stack will be launched | `string` | n/a | yes |
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | Instance Type of the Grafana Instance | `string` | `"t4g.small"` | no |
 | <a name="input_nginx_ssl_cert_key_parameter_name"></a> [nginx\_ssl\_cert\_key\_parameter\_name](#input\_nginx\_ssl\_cert\_key\_parameter\_name) | Name of the SSL parameter of TLS Certification Key for NGINX reverse proxy | `string` | n/a | yes |
@@ -53,5 +54,7 @@ No modules.
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_grafana_instance_public_ip"></a> [grafana\_instance\_public\_ip](#output\_grafana\_instance\_public\_ip) | Public IP Address of the Grafana Instance |
 <!-- END_TF_DOCS -->

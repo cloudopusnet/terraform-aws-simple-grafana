@@ -57,3 +57,14 @@ variable "backup_bucket_name" {
   description = "Name of the Backup Bucket"
   nullable    = false
 }
+
+variable "grafana_config_ini" {
+  type = object({
+    paths = object({
+      data               = optional(string, "/var/lib/grafana")
+      temp_data_lifetime = optional(string, "18h")
+      logs               = optional(string, "/var/lib/grafana/plugins")
+      plugins            = optional(string, "/var/log/grafana")
+    })
+  })
+}

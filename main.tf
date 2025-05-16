@@ -7,10 +7,19 @@ locals {
   backup_sync_content = templatefile("${path.module}/userdata/backup-cron.sh.tpl", {
     backup_bucket_name = var.backup_bucket_name
   })
+  grafana_config_ini_content = templatefile("${path.module}/userdata/grafana-config.ini.tpl", {
+    path_data               = var.grafana_config_ini.paths.data
+    path_temp_data_lifetime = var.grafana_config_ini.paths.temp_data_lifetime
+    path_logs               = var.grafana_config_ini.paths.logs
+    path_plugins            = var.grafana_config_ini.paths.plugins
+  })
   user_data = base64encode(join("\n", [
     templatefile("${path.module}/userdata/ec2-grafana-userdata.sh.tpl", {
-      backup_bucket_name   = var.backup_bucket_name
-      grafana_repo_content = local.grafana_repo_content
+      backup_bucket_name         = var.backup_bucket_name
+      grafana_repo_content       = local.grafana_repo_content
+      grafana_config_ini_content = local.grafana_config_ini_content
+      path_data                  = var.grafana_config_ini.paths.data
+      path_plugins               = var.grafana_config_ini.paths.plugins
     }),
     templatefile("${path.module}/userdata/ec2-nginx-userdata.sh.tpl", {
       nginx_ssl_cert_parameter_name     = var.nginx_ssl_cert_parameter_name
