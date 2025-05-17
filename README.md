@@ -1,6 +1,18 @@
 # terraform-aws-simple-grafana
-A simple solution for self-hosting Grafana OSS on AWS
+A simple solution for self-hosting Grafana OSS on AWS. It is designed for __low cost__ and easy setup, the solution would rely on in-memory sqlite database by design and would utilize __spot__ instance (as it is hard coded into the module)
 
+## Architecture Overview
+![overview](./docs/arch-overview.png)
+
+### Details
+1. The solution should be deployed to a public subnet where, public `Elastic IP Address` can be assigned to a network interface/EC2 instance
+    1. The VPC and Subnet address should be provided as a `module` variable
+1. The solution is utilizing `Spot Instance` type
+    1. Instance type can be provided as a `module` variable
+1. The solution is backing up the Grafana `sqlite` database and `plugins` to AWS S3
+    1. S3 Bucket should be provided as a module variable
+
+# Terraform Module Configuration
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
