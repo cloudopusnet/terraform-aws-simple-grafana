@@ -67,4 +67,12 @@ variable "grafana_config_ini" {
       plugins            = optional(string, "/var/log/grafana")
     })
   })
+  default = {
+    paths = {
+      data               = "/var/lib/grafana"
+      temp_data_lifetime = "18h"
+      logs               = "/var/lib/grafana/plugins"
+      plugins            = "/var/log/grafana"
+    }
+  }
 }
