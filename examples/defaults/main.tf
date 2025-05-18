@@ -14,8 +14,8 @@ module "grafana" {
   vpc_id                            = module.vpc.vpc_id
   instance_subnet_id                = module.vpc.public_subnet_ids[0]
   backup_bucket_name                = module.s3.bucket_name
-  nginx_ssl_cert_key_parameter_name = "<reference to the nginx ssl certificate key file>"
-  nginx_ssl_cert_parameter_name     = "<reference to the nginx ssl certificate crt file>"
+  nginx_ssl_cert_key_parameter_name = var.nginx_ssl_cert_key_parameter_name
+  nginx_ssl_cert_parameter_name     = var.nginx_ssl_cert_parameter_name
 }
 
 output "grafana_instance_public_ip" {
