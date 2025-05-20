@@ -18,6 +18,11 @@ repos:
     entry: bash -c 'tflint --init && tflint'
     language: system
     files: \.tf$
+  - id: shellcheck
+    name: shellcheck
+    entry: bash -c 'shellcheck -S warning ./userdata/*.sh.tpl'
+    language: system
+    files: \.tpl$
 - repo: https://github.com/terraform-docs/terraform-docs
   rev: v0.20.0
   hooks:

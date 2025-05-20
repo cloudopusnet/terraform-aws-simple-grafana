@@ -6,10 +6,10 @@ dnf install nginx -y
 # Fetch SSL certificate and key from Parameter Store
 CERT_PATH="/etc/ssl/grafana.crt"
 KEY_PATH="/etc/ssl/grafana.key"
-
+# shellcheck disable=SC2154
 aws ssm get-parameter --name "${nginx_ssl_cert_parameter_name}" --with-decryption \
   --query "Parameter.Value" --output text > "$CERT_PATH"
-
+# shellcheck disable=SC2154
 aws ssm get-parameter --name "${nginx_ssl_cert_key_parameter_name}" --with-decryption \
   --query "Parameter.Value" --output text > "$KEY_PATH"
 

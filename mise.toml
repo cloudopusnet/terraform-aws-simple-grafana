@@ -5,6 +5,7 @@ terraform-docs = "0.20.0"
 trivy          = "0.62.1"
 tflint         = "0.57.0"
 gitleaks       = "8.26.0"
+shellcheck     = "0.10.0"
 
 [tasks]
 [tasks.fmt]
@@ -15,3 +16,6 @@ run = "pre-commit run --all-files --show-diff-on-failure"
 
 [tasks.trivy]
 run = "trivy fs --scanners misconfig,secret,vuln ."
+
+[tasks.shellcheck]
+run = "shellcheck -S warning ./userdata/*.sh.tpl"
