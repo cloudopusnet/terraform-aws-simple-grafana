@@ -23,7 +23,9 @@ systemctl start grafana-server
 systemctl enable grafana-server.service
 
 # Restore from Backup
+# shellcheck disable=SC2154
 aws s3 sync s3://${backup_bucket_name}/plugins/ ${path_plugins}/ || echo "failed"
+# shellcheck disable=SC2154
 aws s3 cp s3://${backup_bucket_name}/db/grafana.db ${path_data}/grafana.db || echo "failed"
 
 chown -R grafana.grafana ${path_plugins}/
