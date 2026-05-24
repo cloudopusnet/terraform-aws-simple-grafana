@@ -1,7 +1,7 @@
 [tools]
 terraform      = "1.9.8"
 pre-commit     = "4.2.0"
-terraform-docs = "0.20.0"
+terraform-docs = "0.24.0"
 trivy          = "0.62.1"
 tflint         = "0.58.0"
 gitleaks       = "8.26.0"
